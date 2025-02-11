@@ -67,9 +67,12 @@ export default function Tile({
                 </div>
 
                 {/* Card Back (Hidden Side) */}
-                <div className="card-back d-flex flex-column align-items-center justify-content-center bg-dark">
-                    <img src={cardBackImage} alt="Card Back" className="card-image" />
-                    <span className="font-weight-bold" style={{ fontSize: "28px", color: "#ff7612" }}>
+                <div className="card-back d-flex flex-column align-items-center justify-content-center bg-dark position-relative">
+                    <img src={cardBackImage} alt="Card Back" className="card-image mb-2" />
+                    <span
+                        className="font-weight-bold position-absolute"
+                        style={{ fontSize: "44px", color: "#ff7612", bottom: 0 }}
+                    >
                         {index + 1}
                     </span>
                 </div>
