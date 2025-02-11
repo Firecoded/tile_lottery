@@ -57,7 +57,10 @@ export default function Tile({
                             </div>
                         </>
                     ) : (
-                        <span className="prize text-white font-weight-bold px-2" style={{ fontSize: "24px" }}>
+                        <span
+                            className="prize text-white font-weight-bold px-2"
+                            style={{ fontSize: "24px", textAlign: "center" }}
+                        >
                             {prize}
                         </span>
                     )}
