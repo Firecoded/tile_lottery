@@ -42,6 +42,7 @@ export default function TilesContainer() {
     });
 
     const [isEditing, setIsEditing] = useState(false);
+    const [isShuffling, setShuffling] = useState(false);
 
     const flipTile = (id: number, isFlipped: boolean) => {
         setTileConfig(tileConfig.map((tile) => (tile.id === id ? { ...tile, isFlipped } : tile)));
@@ -63,14 +64,18 @@ export default function TilesContainer() {
     };
 
     const handleShuffle = () => {
-        setTileConfig((prevConfig) => {
-            let shuffled = [...prevConfig];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
-        });
+        setShuffling(true);
+        setTimeout(() => {
+            setTileConfig((prevConfig) => {
+                let shuffled = [...prevConfig];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            });
+            setShuffling(false);
+        }, 500);
     };
 
     return (
@@ -83,6 +88,7 @@ export default function TilesContainer() {
                 justifyContent: "center",
                 flexDirection: "column",
             }}
+            className="bg-black"
         >
             <div
                 style={{
@@ -94,7 +100,7 @@ export default function TilesContainer() {
                     <button className="btn btn-secondary me-2" onClick={handleShuffle}>
                         Shuffle
                     </button>
-                    <button className="btn btn-primary" onClick={isEditing ? handleSave : handleIsEditing}>
+                    <button className="btn btn-secondary" onClick={isEditing ? handleSave : handleIsEditing}>
                         {isEditing ? "Save" : "Edit"}
                     </button>
                 </div>
@@ -117,6 +123,7 @@ export default function TilesContainer() {
                             isEditing={isEditing}
                             updateTilePrize={updateTilePrize}
                             index={index}
+                            isShuffling={isShuffling}
                         />
                     ))}
                 </div>
