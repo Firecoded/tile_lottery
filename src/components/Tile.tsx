@@ -1,12 +1,7 @@
 import cardBackImage from "../assets/Sundance_Cards_1080_1.png";
 import "./tile.css";
+import { TileData } from "./TilesContainer";
 
-interface TileData {
-    id: number;
-    prize: string;
-    image: string;
-    isFlipped: boolean;
-}
 interface TileProps {
     data: TileData;
     flipTile: (id: number, isFlipped: boolean) => void;
@@ -14,12 +9,14 @@ interface TileProps {
     isEditing: boolean;
     index: number;
     isShuffling: boolean;
+    toggleChaseCard: (id: number) => void;
 }
 export default function Tile({
-    data: { id, isFlipped, prize },
+    data: { id, isFlipped, prize, isChaseCard },
     flipTile,
     isEditing,
     updateTilePrize,
+    toggleChaseCard,
     index,
     isShuffling,
 }: TileProps) {
@@ -40,14 +37,25 @@ export default function Tile({
         >
             <div className="card-inner bg-dark">
                 {/* Card Front (Prize Image) */}
-                <div className="card-front bg-dark">
+                <div className="card-front bg-dark d-flex flex-column">
                     {isEditing ? (
-                        <input
-                            type="text"
-                            value={prize}
-                            onChange={(e) => updateTilePrize(id, e.target.value)}
-                            className="card-input"
-                        />
+                        <>
+                            <input
+                                type="text"
+                                value={prize}
+                                onChange={(e) => updateTilePrize(id, e.target.value)}
+                                className="card-input"
+                            />
+                            <div className="mt-2 d-flex align-items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={isChaseCard}
+                                    onChange={() => toggleChaseCard(id)}
+                                    className="me-2"
+                                />
+                                <label className="text-white">Chase Card</label>
+                            </div>
+                        </>
                     ) : (
                         <span className="prize text-white font-weight-bold px-2" style={{ fontSize: "24px" }}>
                             {prize}
@@ -56,7 +64,7 @@ export default function Tile({
                 </div>
 
                 {/* Card Back (Hidden Side) */}
-                <div className="card-back d-flex flex-column align items-center justify-content-center bg-dark">
+                <div className="card-back d-flex flex-column align-items-center justify-content-center bg-dark">
                     <img src={cardBackImage} alt="Card Back" className="card-image" />
                     <span className="text-white font-weight-bold">{index + 1}</span>
                 </div>

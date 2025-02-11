@@ -1,51 +1,69 @@
 import { useState } from "react";
 import Tile from "./Tile";
+import ReactConfetti from "react-confetti";
+import { useWindowSize } from "react-use";
 
-interface TileData {
+export interface TileData {
     id: number;
     prize: string;
     image: string;
     isFlipped: boolean;
+    isChaseCard: boolean;
 }
 
 export default function TilesContainer() {
     const [tileConfig, setTileConfig] = useState(() => {
         const savedConfig = localStorage.getItem("tileConfig");
         return savedConfig
-            ? (JSON.parse(savedConfig).map((tile: TileData) => ({ ...tile, isFlipped: false })) as TileData[])
+            ? (JSON.parse(savedConfig).map((tile: TileData) => ({
+                  ...tile,
+                  isFlipped: false,
+                  isChaseCard: tile.isChaseCard == true,
+              })) as TileData[])
             : [
-                  { id: 1, prize: "Gold Coin", image: "🥇", isFlipped: false },
-                  { id: 2, prize: "Silver Coin", image: "🥈", isFlipped: false },
-                  { id: 3, prize: "Bronze Coin", image: "🥉", isFlipped: false },
-                  { id: 4, prize: "Diamond", image: "💎", isFlipped: false },
-                  { id: 5, prize: "Star", image: "⭐", isFlipped: false },
-                  { id: 6, prize: "Gift Box", image: "🎁", isFlipped: false },
-                  { id: 7, prize: "Treasure Chest", image: "🪙", isFlipped: false },
-                  { id: 8, prize: "Crown", image: "👑", isFlipped: false },
-                  { id: 9, prize: "Mystery Box", image: "❓", isFlipped: false },
-                  { id: 10, prize: "Rocket", image: "🚀", isFlipped: false },
-                  { id: 11, prize: "Heart", image: "❤️", isFlipped: false },
-                  { id: 12, prize: "Lightning", image: "⚡", isFlipped: false },
-                  { id: 13, prize: "Key", image: "🔑", isFlipped: false },
-                  { id: 14, prize: "Shield", image: "🛡️", isFlipped: false },
-                  { id: 15, prize: "Bag of Coins", image: "💰", isFlipped: false },
-                  { id: 16, prize: "Medal", image: "🏅", isFlipped: false },
-                  { id: 17, prize: "Fire", image: "🔥", isFlipped: false },
-                  { id: 18, prize: "Gem", image: "💠", isFlipped: false },
-                  { id: 19, prize: "Lucky Clover", image: "🍀", isFlipped: false },
-                  { id: 20, prize: "Sun", image: "🌞", isFlipped: false },
-                  { id: 21, prize: "Moon", image: "🌙", isFlipped: false },
-                  { id: 22, prize: "Anchor", image: "⚓", isFlipped: false },
-                  { id: 23, prize: "Bell", image: "🔔", isFlipped: false },
-                  { id: 24, prize: "Sword", image: "🗡️", isFlipped: false },
+                  { id: 1, prize: "Gold Coin", image: "🥇", isFlipped: false, isChaseCard: false },
+                  { id: 2, prize: "Silver Coin", image: "🥈", isFlipped: false, isChaseCard: false },
+                  { id: 3, prize: "Bronze Coin", image: "🥉", isFlipped: false, isChaseCard: false },
+                  { id: 4, prize: "Diamond", image: "💎", isFlipped: false, isChaseCard: false },
+                  { id: 5, prize: "Star", image: "⭐", isFlipped: false, isChaseCard: false },
+                  { id: 6, prize: "Gift Box", image: "🎁", isFlipped: false, isChaseCard: false },
+                  { id: 7, prize: "Treasure Chest", image: "🪙", isFlipped: false, isChaseCard: false },
+                  { id: 8, prize: "Crown", image: "👑", isFlipped: false, isChaseCard: false },
+                  { id: 9, prize: "Mystery Box", image: "❓", isFlipped: false, isChaseCard: false },
+                  { id: 10, prize: "Rocket", image: "🚀", isFlipped: false, isChaseCard: false },
+                  { id: 11, prize: "Heart", image: "❤️", isFlipped: false, isChaseCard: false },
+                  { id: 12, prize: "Lightning", image: "⚡", isFlipped: false, isChaseCard: false },
+                  { id: 13, prize: "Key", image: "🔑", isFlipped: false, isChaseCard: false },
+                  { id: 14, prize: "Shield", image: "🛡️", isFlipped: false, isChaseCard: false },
+                  { id: 15, prize: "Bag of Coins", image: "💰", isFlipped: false, isChaseCard: false },
+                  { id: 16, prize: "Medal", image: "🏅", isFlipped: false, isChaseCard: false },
+                  { id: 17, prize: "Fire", image: "🔥", isFlipped: false, isChaseCard: false },
+                  { id: 18, prize: "Gem", image: "💠", isFlipped: false, isChaseCard: false },
+                  { id: 19, prize: "Lucky Clover", image: "🍀", isFlipped: false, isChaseCard: false },
+                  { id: 20, prize: "Sun", image: "🌞", isFlipped: false, isChaseCard: false },
+                  { id: 21, prize: "Moon", image: "🌙", isFlipped: false, isChaseCard: false },
+                  { id: 22, prize: "Anchor", image: "⚓", isFlipped: false, isChaseCard: false },
+                  { id: 23, prize: "Bell", image: "🔔", isFlipped: false, isChaseCard: false },
+                  { id: 24, prize: "Sword", image: "🗡️", isFlipped: false, isChaseCard: false },
               ];
     });
 
     const [isEditing, setIsEditing] = useState(false);
     const [isShuffling, setShuffling] = useState(false);
+    const [chaseCardFlipped, setChaseCardFlipped] = useState(false);
 
     const flipTile = (id: number, isFlipped: boolean) => {
-        setTileConfig(tileConfig.map((tile) => (tile.id === id ? { ...tile, isFlipped } : tile)));
+        setTileConfig((prevConfig) =>
+            prevConfig.map((tile) => {
+                if (tile.id === id) {
+                    if (tile.isChaseCard && isFlipped) {
+                        setChaseCardFlipped(true);
+                    }
+                    return { ...tile, isFlipped };
+                }
+                return tile;
+            })
+        );
     };
 
     const updateTilePrize = (id: number, prize: string) => {
@@ -78,6 +96,14 @@ export default function TilesContainer() {
         }, 500);
     };
 
+    const toggleChaseCard = (id: number) => {
+        setTileConfig((prevConfig) =>
+            prevConfig.map((tile) => (tile.id === id ? { ...tile, isChaseCard: !tile.isChaseCard } : tile))
+        );
+    };
+
+    const { width, height } = useWindowSize();
+
     return (
         <div
             style={{
@@ -90,19 +116,29 @@ export default function TilesContainer() {
             }}
             className="bg-black"
         >
+            {chaseCardFlipped && <ReactConfetti width={width} height={height} numberOfPieces={500} gravity={0.3} />}
             <div
                 style={{
                     position: "relative",
                     width: "90%", // Make grid dynamic based on container
                 }}
             >
-                <div className="d-flex justify-content-end mb-2">
-                    <button className="btn btn-secondary me-2" onClick={handleShuffle}>
-                        Shuffle
-                    </button>
-                    <button className="btn btn-secondary" onClick={isEditing ? handleSave : handleIsEditing}>
-                        {isEditing ? "Save" : "Edit"}
-                    </button>
+                <div className="d-flex justify-content-between mb-2">
+                    <div>
+                        {chaseCardFlipped && (
+                            <button className="btn btn-secondary me-2" onClick={() => setChaseCardFlipped(false)}>
+                                End confetti
+                            </button>
+                        )}
+                    </div>
+                    <div>
+                        <button className="btn btn-secondary me-2" onClick={handleShuffle}>
+                            Shuffle
+                        </button>
+                        <button className="btn btn-secondary" onClick={isEditing ? handleSave : handleIsEditing}>
+                            {isEditing ? "Save" : "Edit"}
+                        </button>
+                    </div>
                 </div>
 
                 <div
@@ -124,6 +160,7 @@ export default function TilesContainer() {
                             updateTilePrize={updateTilePrize}
                             index={index}
                             isShuffling={isShuffling}
+                            toggleChaseCard={toggleChaseCard}
                         />
                     ))}
                 </div>
