@@ -38,9 +38,9 @@ export default function Tile({
                 animation: isShuffling ? `shuffleEffect 0.5s ease ${index * 0.02}s` : "none",
             }}
         >
-            <div className="card-inner">
+            <div className="card-inner bg-dark">
                 {/* Card Front (Prize Image) */}
-                <div className="card-front">
+                <div className="card-front bg-dark">
                     {isEditing ? (
                         <input
                             type="text"
@@ -49,14 +49,16 @@ export default function Tile({
                             className="card-input"
                         />
                     ) : (
-                        <span className="prize">{prize}</span>
+                        <span className="prize text-white font-weight-bold px-2" style={{ fontSize: "24px" }}>
+                            {prize}
+                        </span>
                     )}
                 </div>
 
                 {/* Card Back (Hidden Side) */}
                 <div className="card-back d-flex flex-column align items-center justify-content-center bg-dark">
                     <img src={cardBackImage} alt="Card Back" className="card-image" />
-                    <span>{index + 1}</span>
+                    <span className="text-white font-weight-bold">{index + 1}</span>
                 </div>
             </div>
         </div>
